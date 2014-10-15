@@ -1,0 +1,14 @@
+#ifndef _MAIN_HPP
+#define _MAIN_HPP
+
+#define IOSwitch_VERSION_MAJOR @IOSwitch_VERSION_MAJOR@
+#define IOSwitch_VERSION_MINOR @IOSwitch_VERSION_MINOR@
+
+
+#include <put.hpp>
+#include <modeldb.hpp>
+#include <get.hpp>
+
+#include <CivetServer.h>
+
+#endif
