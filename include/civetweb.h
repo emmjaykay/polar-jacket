@@ -1,4 +1,5 @@
-/* Copyright (c) 2004-2013 Sergey Lyubka
+/* Copyright (c) 2013-2014 the Civetweb developers
+ * Copyright (c) 2004-2013 Sergey Lyubka
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -76,7 +77,7 @@ struct mg_request_info {
 
 /* This structure needs to be passed to mg_start(), to let civetweb know
    which callbacks to invoke. For detailed description, see
-   https://github.com/sunsetbrew/civetweb/blob/master/docs/UserManual.md */
+   https://github.com/bel2125/civetweb/blob/master/docs/UserManual.md */
 struct mg_callbacks {
     /* Called when civetweb has received new HTTP request.
        If callback returns non-zero,
@@ -154,6 +155,7 @@ struct mg_callbacks {
     int  (*http_error)(struct mg_connection *, int status);
 };
 
+
 /* Start web server.
 
    Parameters:
@@ -174,7 +176,7 @@ struct mg_callbacks {
      };
      struct mg_context *ctx = mg_start(&my_func, NULL, options);
 
-   Refer to https://github.com/sunsetbrew/civetweb/blob/master/docs/UserManual.md
+   Refer to https://github.com/bel2125/civetweb/blob/master/docs/UserManual.md
    for the list of valid option and their possible values.
 
    Return:
@@ -191,6 +193,7 @@ CIVETWEB_API struct mg_context *mg_start(const struct mg_callbacks *callbacks,
    threads are stopped. Context pointer becomes invalid. */
 CIVETWEB_API void mg_stop(struct mg_context *);
 
+
 /* mg_request_handler
 
    Called when a new request comes in.  This callback is URI based
@@ -203,6 +206,7 @@ CIVETWEB_API void mg_stop(struct mg_context *);
       0: the handler could not handle the request, so fall through.
       1: the handler processed the request. */
 typedef int (* mg_request_handler)(struct mg_connection *conn, void *cbdata);
+
 
 /* mg_set_request_handler
 
@@ -232,11 +236,38 @@ CIVETWEB_API void mg_set_request_handler(struct mg_context *ctx, const char *uri
 CIVETWEB_API const char *mg_get_option(const struct mg_context *ctx, const char *name);
 
 
+#if defined(MG_LEGACY_INTERFACE)
 /* Return array of strings that represent valid configuration options.
    For each option, option name and default value is returned, i.e. the
    number of entries in the array equals to number_of_options x 2.
    Array is NULL terminated. */
+/* Deprecated: Use mg_get_valid_options instead. */
 CIVETWEB_API const char **mg_get_valid_option_names(void);
+#endif
+
+
+struct mg_option {
+    const char * name;
+    int type;
+    const char * default_value;
+};
+
+enum {
+    CONFIG_TYPE_UNKNOWN = 0x0,
+    CONFIG_TYPE_NUMBER = 0x1,
+    CONFIG_TYPE_STRING = 0x2,
+    CONFIG_TYPE_FILE = 0x3,
+    CONFIG_TYPE_DIRECTORY = 0x4,
+    CONFIG_TYPE_BOOLEAN = 0x5,
+    CONFIG_TYPE_EXT_PATTERN = 0x6
+};
+
+
+/* Return array of struct mg_option, representing all valid configuration
+   options of civetweb.c.
+   The array is terminated by a NULL name option. */
+CIVETWEB_API const struct mg_option *mg_get_valid_options(void);
+
 
 /* Get the list of ports that civetweb is listening on.
    size is the size of the ports int array and ssl int array to fill.
@@ -246,6 +277,7 @@ CIVETWEB_API const char **mg_get_valid_option_names(void);
    The value returned is read-only. Civetweb does not allow changing
    configuration at run time. */
 CIVETWEB_API size_t mg_get_ports(const struct mg_context *ctx, size_t size, int* ports, int* ssl);
+
 
 /* Add, edit or delete the entry in the passwords file.
 
@@ -292,13 +324,25 @@ CIVETWEB_API int mg_write(struct mg_connection *, const void *buf, size_t len);
 CIVETWEB_API int mg_websocket_write(struct mg_connection* conn, int opcode,
                                     const char *data, size_t data_len);
 
+
 /* Blocks until unique access is obtained to this connection. Intended for use
    with websockets only.
    Invoke this before mg_write or mg_printf when communicating with a
    websocket if your code has server-initiated communication as well as
    communication in direct response to a message. */
-CIVETWEB_API void mg_lock(struct mg_connection* conn);
-CIVETWEB_API void mg_unlock(struct mg_connection* conn);
+CIVETWEB_API void mg_lock_connection(struct mg_connection* conn);
+CIVETWEB_API void mg_unlock_connection(struct mg_connection* conn);
+
+#if defined(MG_LEGACY_INTERFACE)
+#define mg_lock mg_lock_connection
+#define mg_unlock mg_unlock_connection
+#endif
+
+/* Lock server context.  This lock may be used to protect ressources
+   that are shared between different connection/worker threads. */
+CIVETWEB_API void mg_lock_context(struct mg_context* ctx);
+CIVETWEB_API void mg_unlock_context(struct mg_context* ctx);
+
 
 /* Opcodes, from http://tools.ietf.org/html/rfc6455 */
 enum {
@@ -331,7 +375,6 @@ enum {
 #endif
 
 /* Send data to the client using printf() semantics.
-
    Works exactly like mg_write(), but allows to do message formatting. */
 CIVETWEB_API int mg_printf(struct mg_connection *,
                            PRINTF_FORMAT_STRING(const char *fmt), ...) PRINTF_ARGS(2, 3);
@@ -379,6 +422,7 @@ CIVETWEB_API const char *mg_get_header(const struct mg_connection *, const char 
 CIVETWEB_API int mg_get_var(const char *data, size_t data_len,
                             const char *var_name, char *dst, size_t dst_len);
 
+
 /* Get a value of particular form variable.
 
    Parameters:
@@ -404,6 +448,7 @@ CIVETWEB_API int mg_get_var(const char *data, size_t data_len,
    NULL or zero length. */
 CIVETWEB_API int mg_get_var2(const char *data, size_t data_len,
                              const char *var_name, char *dst, size_t dst_len, size_t occurrence);
+
 
 /* Fetch value of certain cookie variable into the destination buffer.
 
@@ -467,6 +512,7 @@ CIVETWEB_API const char *mg_get_builtin_mime_type(const char *file_name);
 /* Return Civetweb version. */
 CIVETWEB_API const char *mg_version(void);
 
+
 /* URL-decode input buffer into destination buffer.
    0-terminate the destination buffer.
    form-url-encoded data differs from URI encoding in a way that it
@@ -476,10 +522,12 @@ CIVETWEB_API const char *mg_version(void);
 CIVETWEB_API int mg_url_decode(const char *src, int src_len, char *dst,
                                int dst_len, int is_form_url_encoded);
 
+
 /* URL-encode input buffer into destination buffer.
    returns the length of the resulting buffer or -1
    is the buffer is too small. */
 CIVETWEB_API int mg_url_encode(const char *src, char *dst, size_t dst_len);
+
 
 /* MD5 hash given strings.
    Buffer 'buf' must be 33 bytes long. Varargs is a NULL terminated list of
@@ -500,8 +548,10 @@ CIVETWEB_API char *mg_md5(char buf[33], ...);
 CIVETWEB_API void mg_cry(struct mg_connection *conn,
                          PRINTF_FORMAT_STRING(const char *fmt), ...) PRINTF_ARGS(2, 3);
 
+
 /* utility method to compare two buffers, case incensitive. */
 CIVETWEB_API int mg_strncasecmp(const char *s1, const char *s2, size_t len);
+
 
 #ifdef __cplusplus
 }

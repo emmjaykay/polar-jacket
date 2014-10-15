@@ -5,7 +5,9 @@
 
 int main() {
 
-  const char * options[] = { "listening_ports", "8080", 0};
+  const char * options[] = { "listening_ports", "8080", 
+			     0
+  };
 
   CivetServer server(options);
 
