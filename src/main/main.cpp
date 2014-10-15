@@ -15,6 +15,6 @@ int main() {
   server.addHandler("/get", new get());
 
   ModelDb::instance();
-  while(1) {}
+  ModelDb::instance()->_io_service.run();
 
 }
