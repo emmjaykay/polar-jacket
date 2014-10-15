@@ -18,18 +18,18 @@ configure_file (
 include_directories("${CMAKE_SOURCE_DIR}/include")
 link_directories("${CMAKE_SOURCE_DIR}/lib")
 
-add_executable(ioswitch main.cpp)
-add_dependencies(ioswitch putlib getlib modeldb civetlib)
-target_link_libraries(ioswitch boost_system)
-target_link_libraries(ioswitch rocksdb)
-target_link_libraries(ioswitch civetlib)
+add_executable(pjd main.cpp)
+add_dependencies(pjd putlib getlib modeldb civetlib)
+target_link_libraries(pjd boost_system)
+target_link_libraries(pjd rocksdb)
+target_link_libraries(pjd civetlib)
 
-target_link_libraries(ioswitch putlib getlib modeldb civetlib ${CMAKE_SOURCE_DIR}/lib/librocksdb.a snappy z bz2 )
+target_link_libraries(pjd putlib getlib modeldb civetlib ${CMAKE_SOURCE_DIR}/lib/librocksdb.a snappy z bz2 )
 
-#target_link_libraries(ioswitch httpserver)
+#target_link_libraries(pjd httpserver)
 
-target_link_libraries(ioswitch boost_thread boost_system pthread dl)
+target_link_libraries(pjd boost_thread boost_system pthread dl)
 ADD_DEFINITIONS(-Wall -std=c++11 -g -O2 -DZLIB)
 
-install(TARGETS ioswitch COMPONENT ioswitch RUNTIME DESTINATION ${PROJECT_SOURCE_DIR})
+install(TARGETS pjd COMPONENT pjd RUNTIME DESTINATION ${PROJECT_SOURCE_DIR})
 
