@@ -28,7 +28,7 @@ bool put::handlePut(CivetServer *server, struct mg_connection *conn) {
   if (key.length() < 5)
     return false;
 
-  std::cerr << "asdf: " <<  key.substr(5) << "\t";
+  //std::cerr << "asdf: " <<  key.substr(5) << "\t";
   ModelDb::instance()->_io_service.post(boost::bind(&ModelWriter::save,mw, key.substr(5), value));
 
   mg_printf(conn, "HTTP/1.1 301 OK\r\nContent-Type: text/html\r\n\r\n");

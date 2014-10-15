@@ -63,7 +63,6 @@ private:
   ModelDb& operator=(ModelDb const&) {return *_instance;};
   std::string _data;
 
-
   boost::shared_ptr<boost::asio::io_service::work> _work;
   boost::thread_group _threads;
 

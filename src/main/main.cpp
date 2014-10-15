@@ -14,6 +14,7 @@ int main() {
   server.addHandler("/put", new put());
   server.addHandler("/get", new get());
 
+  ModelDb::instance();
   while(1) {}
 
 }

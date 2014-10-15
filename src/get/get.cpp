@@ -14,7 +14,7 @@ bool get::handleGet(CivetServer *server, struct mg_connection *conn) {
 
   std::string value;
   rocksdb::Status status = ModelDb::instance()->_thedb->Get(rocksdb::ReadOptions(), key.substr(5), &value);
-  std::cerr << "getting! " << key << " -- " << value << std::endl;
+
   mg_printf(conn, "%s", value.c_str());
   return true;
 }
