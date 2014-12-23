@@ -15,9 +15,9 @@ URIs are the main way to communicate with pjd.
 
 Putting data in a matter of giving a a key value (1) to your data (file.dat in this case).
 
-   curl -X POST http://localhost:8080/put/1 -d ./file.dat
+    curl -X POST http://localhost:8080/put/1 -d ./file.dat
 
 Retreiving it should be as simple as
 
-   curl http://localhost:8080/get/1
+    curl http://localhost:8080/get/1
 
