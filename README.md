@@ -21,3 +21,4 @@ Retreiving it should be as simple as
 
     curl http://localhost:8080/get/1
 
+[![ghit.me](https://ghit.me/badge.svg?repo=emmjaykay/polar-jacket)](https://ghit.me/repo/emmjaykay/polar-jacket)
